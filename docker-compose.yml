@@ -1,0 +1,23 @@
+version: '3'
+services:
+
+  backend:
+    restart: unless-stopped
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/data/:/home/muhal-backend/muhal/data.db
+      - web-django:/home/muhal-backend/muhal/static
+      - web-django:/home/muhal-backend/muhal/static/media
+    command: pipenv run gunicorn muhal.wsgi
+    expose: 
+      - "8000"
+    ports: 
+      - "8000:8000"
+    env_file: 
+      - .env
+
+volumes: 
+  web-static:
+  web-django:
