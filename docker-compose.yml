@@ -7,12 +7,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - ./backend/data/:/home/muhal-backend/muhal/data.db
+      - ./backend/data/:/home/muhal-backend/muhal/data/
       - web-django:/home/muhal-backend/muhal/static
       - web-django:/home/muhal-backend/muhal/static/media
-    command: pipenv run gunicorn muhal.wsgi
-    expose: 
-      - "8000"
+    command: pipenv run gunicorn -b 0.0.0.0:8000 muhal.wsgi
     ports: 
       - "8000:8000"
     env_file: 
