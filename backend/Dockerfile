@@ -12,3 +12,5 @@ RUN pipenv install
 RUN pipenv install gunicorn
 WORKDIR muhal
 COPY config/local_settings.py muhal/local_settings.py 
+COPY ./start.sh .
+RUN chmod +x start.sh

@@ -8,14 +8,29 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend/data/:/home/muhal-backend/muhal/data/
-      - web-django:/home/muhal-backend/muhal/static
-      - web-django:/home/muhal-backend/muhal/static/media
-    command: pipenv run gunicorn -b 0.0.0.0:8000 muhal.wsgi
-    ports: 
-      - "8000:8000"
+      - web-static:/home/muhal-backend/muhal/static
+    command: ./start.sh
+    # ports: 
+    #   - "8000:8000"
+    expose: 
+      - "8000"
     env_file: 
       - .env
 
+  nginx:
+    restart: unless-stopped
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - web-static:/www/static
+    command: /bin/sh -c "envsubst '$${PROJECT_ROOT}' < /tmp/muhal.conf.template > /etc/nginx/conf.d/muhal.conf && cat /etc/nginx/conf.d/muhal.conf && exec nginx -g 'daemon off;'"
+    env_file: 
+      - .env
+    depends_on: 
+      - backend
+
 volumes: 
   web-static:
-  web-django:
