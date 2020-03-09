@@ -1,5 +1,7 @@
 FROM python:3.6-slim
 
+RUN apt-get update && apt-get install -y gettext
+
 RUN mkdir /home/muhal-backend
 ADD https://api.github.com/repos/SocialMediaExchange/muhal-backend/tarball /home/muhal-backend.tar.gz
 RUN tar -xvzf /home/muhal-backend.tar.gz -C /home/muhal-backend --strip-components 1
