@@ -9,7 +9,7 @@ RUN ls -alh
 
 RUN pip install pipenv
 RUN pipenv install
-RUN pipenv install gunicorn
+RUN pipenv install gunicorn --skip-lock
 WORKDIR muhal
 COPY config/local_settings.py muhal/local_settings.py 
 COPY ./start.sh .
