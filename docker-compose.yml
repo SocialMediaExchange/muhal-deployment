@@ -26,7 +26,7 @@ services:
       - "80:80"
     volumes:
       - web-static:/www/static
-    command: /bin/sh -c "envsubst '$${PROJECT_ROOT}' < /tmp/muhal.conf.template > /etc/nginx/conf.d/muhal.conf && cat /etc/nginx/conf.d/muhal.conf && exec nginx -g 'daemon off;'"
+    command: /bin/sh -c "envsubst '$${PROJECT_URL}' < /tmp/backend.conf.template > /etc/nginx/conf.d/backend.conf && exec nginx -g 'daemon off;'"
     env_file: 
       - .env
     depends_on: 
