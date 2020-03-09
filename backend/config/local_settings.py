@@ -3,7 +3,7 @@
 import os
 from distutils.util import strtobool
 
-DEBUG = bool(strtobool(os.environ.get('DJANGO_DEBUG', False)))
+DEBUG = bool(strtobool(os.environ.get('DJANGO_DEBUG', "False")))
 
 # Make these unique, and don't share it with anybody.
 SECRET_KEY = os.environ['SECRET_KEY']
