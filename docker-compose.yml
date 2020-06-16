@@ -1,6 +1,5 @@
-version: '3'
+version: "3"
 services:
-
   backend:
     restart: unless-stopped
     build:
@@ -10,16 +9,28 @@ services:
       - ./backend/data/:/home/muhal-backend/muhal/data/
       - web-static:/home/muhal-backend/muhal/static
     command: ./start.sh
-    # ports: 
-    #   - "8000:8000"
-    expose: 
+    expose:
       - "8000"
-    env_file: 
+    env_file:
       - .env
+    networks:
+      - private
+
+  client:
+    restart: unless-stopped
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    expose:
+      - "3000"
+    env_file:
+      - .env
+    networks:
+      - private
 
   nginx:
     restart: unless-stopped
-    build: 
+    build:
       context: ./nginx
       dockerfile: Dockerfile
     ports:
@@ -27,10 +38,20 @@ services:
     volumes:
       - web-static:/www/static
     command: /bin/sh -c "envsubst '$${PROJECT_URL}' < /tmp/backend.conf.template > /etc/nginx/conf.d/backend.conf && exec nginx -g 'daemon off;'"
-    env_file: 
+    env_file:
       - .env
-    depends_on: 
+    depends_on:
       - backend
+      - client
+    networks:
+      - public
+      - private
 
-volumes: 
+volumes:
   web-static:
+
+networks:
+  private:
+    driver: bridge
+  public:
+    driver: bridge
