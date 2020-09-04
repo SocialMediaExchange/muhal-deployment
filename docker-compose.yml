@@ -8,6 +8,7 @@ services:
     volumes:
       - ./backend/data/:/home/muhal-backend/muhal/data/
       - web-static:/home/muhal-backend/muhal/static
+      - ${PWD}/backend/data/db.sqlite3:/home/muhal-backend/muhal/db.sqlite3
     command: ./start.sh
     expose:
       - "8000"

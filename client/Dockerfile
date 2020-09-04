@@ -4,9 +4,9 @@ RUN apk add tar
 
 WORKDIR /app
 
-ADD https://api.github.com/repos/SocialMediaExchange/muhal-client/tarball/master master.zip
+ADD https://api.github.com/repos/SocialMediaExchange/muhal-client/tarball/main main.zip
 RUN mkdir client 
-RUN tar xvf master.zip -C client --strip-components 1
+RUN tar xvf main.zip -C client --strip-components 1
 
 WORKDIR /app/client
 RUN ls -alh
