@@ -8,14 +8,22 @@ services:
     volumes:
       - ./backend/data/:/home/muhal-backend/muhal/data/
       - web-static:/home/muhal-backend/muhal/static
-      - ${PWD}/backend/data/db.sqlite3:/home/muhal-backend/muhal/db.sqlite3
     command: ./start.sh
     expose:
       - "8000"
     env_file:
       - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.muhal-api.entrypoints=http"
+      - "traefik.http.routers.muhal-api.rule=Host(`localhost`)"
+      - "traefik.http.routers.traefik.rule=PathPrefix(`/admin/`)"
+      - "traefik.http.services.muhal-api.loadbalancer.server.port=8000"
+      - "traefik.docker.network=traefik_proxy"
     networks:
       - private
+      - public
+      - traefik_proxy
 
   client:
     restart: unless-stopped
@@ -26,27 +34,61 @@ services:
       - "3000"
     env_file:
       - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.muhal.entrypoints=http"
+      - "traefik.http.routers.muhal.rule=Host(`localhost`)"
+      - "traefik.http.services.muhal.loadbalancer.server.port=3000"
+      - "traefik.docker.network=traefik_proxy"
     networks:
       - private
+      - public
+      - traefik_proxy
 
-  nginx:
-    restart: unless-stopped
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
+  # nginx:
+  #   restart: unless-stopped
+  #   build:
+  #     context: ./nginx
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - web-static:/www/static
+  #   command: /bin/sh -c "envsubst '$${PROJECT_URL}' < /tmp/backend.conf.template > /etc/nginx/conf.d/backend.conf && exec nginx -g 'daemon off;'"
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - backend
+  #     - client
+  #   networks:
+  #     - public
+  #     - private
+
+  traefik:
+    image: traefik:2.2
+    container_name: traefik
+    restart: always
+    hostname: traefik
+    security_opt:
+      - no-new-privileges:false
     volumes:
-      - web-static:/www/static
-    command: /bin/sh -c "envsubst '$${PROJECT_URL}' < /tmp/backend.conf.template > /etc/nginx/conf.d/backend.conf && exec nginx -g 'daemon off;'"
-    env_file:
-      - .env
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik/traefik.yml:/traefik.yml:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.entrypoints=http"
+      - "traefik.http.routers.traefik.rule=Host(`localhost`)"
+      - "traefik.http.services.traefik.loadbalancer.server.port=3000"
+      - "traefik.docker.network=traefik_proxy"
+    networks:
+      - public
+      - traefik_proxy
+    ports:
+      - 80:80
+      - 8080:8080
     depends_on:
       - backend
       - client
-    networks:
-      - public
-      - private
 
 volumes:
   web-static:
@@ -56,3 +98,5 @@ networks:
     driver: bridge
   public:
     driver: bridge
+  traefik_proxy:
+    # external: true
