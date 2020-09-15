@@ -14,16 +14,14 @@ services:
     env_file:
       - .env
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.muhal-api.entrypoints=http"
-      - "traefik.http.routers.muhal-api.rule=Host(`localhost`)"
-      - "traefik.http.routers.traefik.rule=PathPrefix(`/admin/`)"
-      - "traefik.http.services.muhal-api.loadbalancer.server.port=8000"
-      - "traefik.docker.network=traefik_proxy"
+      - traefik.enable=true
+      - traefik.backend=backend
+      - traefik.docker.network=web
+      - traefik.port=8000
+      - "traefik.http.routers.muhal-api.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/{locale:[a-z]{2}}/admin/`) || PathPrefix(`/{locale:[a-z]{2}}/static/`) || PathPrefix(`/api/`) || PathPrefix(`/static/`) "
     networks:
       - private
-      - public
-      - traefik_proxy
+      - web
 
   client:
     restart: unless-stopped
@@ -35,34 +33,14 @@ services:
     env_file:
       - .env
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.muhal.entrypoints=http"
-      - "traefik.http.routers.muhal.rule=Host(`localhost`)"
-      - "traefik.http.services.muhal.loadbalancer.server.port=3000"
-      - "traefik.docker.network=traefik_proxy"
+      - traefik.enable=true
+      - traefik.backend=client
+      - traefik.docker.network=web
+      - traefik.port=3000
+      - "traefik.http.routers.muhal-client.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/client/`)"
     networks:
       - private
-      - public
-      - traefik_proxy
-
-  # nginx:
-  #   restart: unless-stopped
-  #   build:
-  #     context: ./nginx
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - web-static:/www/static
-  #   command: /bin/sh -c "envsubst '$${PROJECT_URL}' < /tmp/backend.conf.template > /etc/nginx/conf.d/backend.conf && exec nginx -g 'daemon off;'"
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     - backend
-  #     - client
-  #   networks:
-  #     - public
-  #     - private
+      - web
 
   traefik:
     image: traefik:2.2
@@ -76,16 +54,13 @@ services:
       - "./traefik/traefik.yml:/traefik.yml:ro"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.entrypoints=http"
-      - "traefik.http.routers.traefik.rule=Host(`localhost`)"
-      - "traefik.http.services.traefik.loadbalancer.server.port=3000"
-      - "traefik.docker.network=traefik_proxy"
     networks:
-      - public
-      - traefik_proxy
+      - private
+      - web
     ports:
-      - 80:80
-      - 8080:8080
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
     depends_on:
       - backend
       - client
@@ -95,8 +70,6 @@ volumes:
 
 networks:
   private:
-    driver: bridge
-  public:
-    driver: bridge
-  traefik_proxy:
-    # external: true
+    external: false
+  web:
+    external: true
