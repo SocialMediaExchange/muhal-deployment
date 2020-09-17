@@ -14,13 +14,9 @@ services:
       - .env
     labels:
       - traefik.enable=true
-      - traefik.backend=backend
-      - traefik.docker.network=web
       - traefik.port=8000
-      - "traefik.http.routers.muhal-api.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/api/`, `/admin/`, `/static/`, `/{locale:[a-z]{2}}/admin/`)"
     networks:
       - private
-      - web
 
   client:
     restart: unless-stopped
@@ -33,13 +29,9 @@ services:
       - .env
     labels:
       - traefik.enable=true
-      - traefik.backend=client
-      - traefik.docker.network=web
       - traefik.port=3000
-      - "traefik.http.routers.muhal-client.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/`, `/{locale:[a-z]{2}}/`, `/_nuxt/`)"
     networks:
       - private
-      - web
 
   traefik:
     image: traefik:2.2
@@ -63,9 +55,6 @@ services:
     depends_on:
       - backend
       - client
-
-volumes:
-  web-static:
 
 networks:
   private:

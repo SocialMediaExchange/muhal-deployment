@@ -101,7 +101,7 @@ certificatesResolvers:
 
 # API and dashboard configuration
 api:
-  # insecure: true
+  insecure: true
   dashboard: true
 
 # Configuration for Traefik logs
@@ -121,11 +121,15 @@ accessLog:
     retryAttempts: true
     minDuration: "10ms"
 
-# http:
-#   routers:
-#     # api-router:
-#     #   rule: "PathPrefix(`/api/`)"
-#     #   service: backend
-#     admin-router:
-#       rule: "PathPrefix(`/admin/`)"
-#       service: backend
+http:
+  routers:
+    client-router:
+      rule: "Host(`${PROJECT_URL}`) && PathPrefix(`/`, `/{locale:[a-z]{2}}/`, `/_nuxt/`)"
+      service: client
+    backend-router:
+      rule: "Host(`${PROJECT_URL}`) && PathPrefix(`/api/`, `/admin/`, `/static/`, `/{locale:[a-z]{2}}/admin/`)"
+      service: backend
+      tls:
+        certResolver: "leresolver"
+        domains:
+          - main: "beta.muhal.org"
