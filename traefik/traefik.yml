@@ -36,9 +36,9 @@ certificatesResolvers:
       # leave commented to go to prod.
       #
       # Optional
-      Default: "https://acme-v02.api.letsencrypt.org/directory"
+      # Default: "https://acme-v02.api.letsencrypt.org/directory"
       #
-      # caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+      caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
       # KeyType to use.
       #
       # Optional

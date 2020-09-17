@@ -5,8 +5,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    volumes:
-      - ${PWD}/backend/data/muhal_data.sqlite3:/home/muhal-backend/muhal/muhal/muhal_data.sqlite3
+    # volumes:
+    #   - ${PWD}/backend/data/muhal_data.sqlite3:/home/muhal-backend/muhal/muhal/muhal_data.sqlite3
     command: ./start.sh
     expose:
       - "8000"
@@ -36,7 +36,7 @@ services:
       - traefik.backend=client
       - traefik.docker.network=web
       - traefik.port=3000
-      - "traefik.http.routers.muhal-client.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/{locale:[a-z]{2}}/`, `/_nuxt/`)"
+      - "traefik.http.routers.muhal-client.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/`, `/{locale:[a-z]{2}}/`, `/_nuxt/`)"
     networks:
       - private
       - web
