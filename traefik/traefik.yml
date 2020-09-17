@@ -121,15 +121,15 @@ accessLog:
     retryAttempts: true
     minDuration: "10ms"
 
-http:
-  routers:
-    client-router:
-      rule: "Host(`${PROJECT_URL}`) && PathPrefix(`/`, `/{locale:[a-z]{2}}/`, `/_nuxt/`)"
-      service: client
-    backend-router:
-      rule: "Host(`${PROJECT_URL}`) && PathPrefix(`/api/`, `/admin/`, `/static/`, `/{locale:[a-z]{2}}/admin/`)"
-      service: backend
-      tls:
-        certResolver: "leresolver"
-        domains:
-          - main: "beta.muhal.org"
+# http:
+#   routers:
+#     client-router:
+#       rule: "Host(`${PROJECT_URL}`) && PathPrefix(`/`, `/{locale:[a-z]{2}}/`, `/_nuxt/`)"
+#       service: client
+#     backend-router:
+#       rule: "Host(`${PROJECT_URL}`) && PathPrefix(`/api/`, `/admin/`, `/static/`, `/{locale:[a-z]{2}}/admin/`)"
+#       service: backend
+#       tls:
+#         certResolver: "leresolver"
+#         domains:
+#           - main: "beta.muhal.org"
