@@ -11,3 +11,15 @@ NEVERCACHE_KEY = os.environ['NEVERCACHE_KEY']
 
 # Allowed development hosts
 ALLOWED_HOSTS = [os.environ['PROJECT_URL'], ]
+
+
+ADMINS = [(email.split('@')[0], email) for email in os.environ['ADMINS'].split(',')]
+MANAGERS = [(email.split('@')[0], email) for email in os.environ['MANAGERS'].split(',')]
+
+EMAIL_HOST = os.environ['EMAIL_HOST']
+EMAIL_PORT = os.environ['EMAIL_PORT']
+SERVER_EMAIL = os.environ['SERVER_EMAIL']
+DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_USE_SSL = True
