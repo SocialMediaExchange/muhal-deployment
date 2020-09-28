@@ -5,7 +5,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    # volumes:
+    volumes:
+      - django_media:/home/muhal-backend/muhal/media
     #   - ${PWD}/backend/data/muhal_data.sqlite3:/home/muhal-backend/muhal/muhal/muhal_data.sqlite3
     command: ./start.sh
     expose:
@@ -15,7 +16,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.backend=backend
-      - traefik.docker.network=web
+      - traefik.docker.network=private
       - traefik.port=8000
       - "traefik.http.routers.muhal-api.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/api/`, `/admin/`, `/static/`, `/{locale:[a-z]{2}}/admin/`)"
     networks:
@@ -35,7 +36,23 @@ services:
       - traefik.backend=client
       - traefik.docker.network=web
       - traefik.port=3000
-      - "traefik.http.routers.muhal-client.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/`, `/{locale:[a-z]{2}}/`, `/_nuxt/`)"
+      - traefik.http.routers.muhal-client.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/`, `/{locale:[a-z]{2}}/`, `/_nuxt/`)
+    networks:
+      - private
+
+  media:
+    restart: unless-stopped
+    image: nginx:1-alpine
+    expose:
+      - "80"
+    volumes:
+      - django_media:/usr/share/nginx/html/media
+    labels:
+      - traefik.enable=true
+      - traefik.backend=media
+      - traefik.docker.network=private
+      - traefik.port=80
+      - traefik.http.routers.muhal-media.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/media`)
     networks:
       - private
 
@@ -50,7 +67,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./traefik/traefik.yml:/traefik.yml:ro"
     labels:
-      - "traefik.enable=true"
+      - traefik.enable=true
     networks:
       - private
       - web
@@ -61,9 +78,13 @@ services:
     depends_on:
       - backend
       - client
+      - media
 
 networks:
   private:
     external: false
   web:
     external: true
+
+volumes: 
+  django_media:

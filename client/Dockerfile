@@ -12,5 +12,5 @@ WORKDIR /app/client
 RUN npm install
 RUN npm run build
 ENV HOST 0.0.0.0
-ENV BASE_API_URL http://backend:3000/api
+ENV BASE_API_URL /api
 CMD ["npm", "run", "start"]
