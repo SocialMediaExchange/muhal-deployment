@@ -18,7 +18,8 @@ services:
       - traefik.backend=backend
       - traefik.docker.network=private
       - traefik.port=8000
-      - "traefik.http.routers.muhal-api.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/api/`, `/admin/`, `/static/`, `/{locale:[a-z]{2}}/admin/`)"
+      - traefik.http.routers.api.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/api/`, `/admin/`, `/static/`, `/{locale:[a-z]{2}}/admin/`)
+      - traefik.http.routers.api.tls.certResolver=leresolver
     networks:
       - private
 
@@ -36,7 +37,8 @@ services:
       - traefik.backend=client
       - traefik.docker.network=web
       - traefik.port=3000
-      - traefik.http.routers.muhal-client.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/`, `/{locale:[a-z]{2}}/`, `/_nuxt/`)
+      - traefik.http.routers.client.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/`, `/{locale:[a-z]{2}}/`, `/_nuxt/`)
+      - traefik.http.routers.client.tls.certResolver=leresolver
     networks:
       - private
 
