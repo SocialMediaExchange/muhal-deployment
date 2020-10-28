@@ -10,7 +10,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 NEVERCACHE_KEY = os.environ['NEVERCACHE_KEY']
 
 # Allowed development hosts
-ALLOWED_HOSTS = [os.environ['PROJECT_URL'], ]
+ALLOWED_HOSTS = [os.environ['PROJECT_URL'], 'backend']
 
 
 ADMINS = [(email.split('@')[0], email) for email in os.environ['ADMINS'].split(',')]
