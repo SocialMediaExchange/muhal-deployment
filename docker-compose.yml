@@ -18,11 +18,9 @@ services:
       - traefik.backend=backend
       - traefik.docker.network=private
       - traefik.port=8000
-      - traefik.http.routers.api.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/api/`, `/admin/`, `/static/`, `/{locale:[a-z]{2}}/admin/`)
+      - traefik.http.routers.api.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/api`, `/admin`, `/static`, `/{locale:[a-z]{2}}/admin`)
       - traefik.http.routers.api.entrypoints=web-secure
       - traefik.http.routers.api.tls.certResolver=leresolver
-      # - traefik.http.routers.api.entrypoints=web
-      # - traefik.http.routers.api.middlewares=https_redirect
     networks:
       - private
 
@@ -38,13 +36,11 @@ services:
     labels:
       - traefik.enable=true
       - traefik.backend=client
-      - traefik.docker.network=web
-      - traefik.port=3000
-      - traefik.http.routers.client.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/`, `/{locale:[a-z]{2}}/`, `/_nuxt/`)
+      - traefik.docker.network=private
+      - traefik.porta=3000
+      - traefik.http.routers.client.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/{locale:[a-z]{2}}/`, `/_nuxt/`, `/cases`) || Path(`/`)
       - traefik.http.routers.client.tls.certResolver=leresolver
       - traefik.http.routers.client.entrypoints=web-secure
-      - traefik.http.routers.client.middlewares=https_redirect
-
     networks:
       - private
 
@@ -54,16 +50,13 @@ services:
     expose:
       - "80"
     volumes:
-      - django_media:/usr/share/nginx/html:ro
+      - django_media:/usr/share/nginx/html/media:ro
     labels:
       - traefik.enable=true
       - traefik.backend=media
       - traefik.docker.network=private
       - traefik.port=80
       - traefik.http.routers.media.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/media`)
-      # - traefik.http.routers.media.rule=PathPrefix(`/media`)
-      - traefik.http.middlewares.nginx-stripprefix.stripprefix.prefixes=/media
-      - traefik.http.routers.media.middlewares=nginx-stripprefix@docker
     networks:
       - private
 
@@ -79,9 +72,7 @@ services:
       - "./traefik/traefik.yml:/traefik.yml:ro"
     labels:
       - traefik.enable=true
-      # redirect to https middleware
-      - traefik.http.middlewares.https_redirect.redirectscheme.scheme=https
-      - traefik.http.middlewares.https_redirect.redirectscheme.permanent=true
+      - traefik.http.routers.traefik.rule=Host(`${PROJECT_URL}`)
     networks:
       - private
       - web

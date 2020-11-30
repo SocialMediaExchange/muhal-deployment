@@ -19,7 +19,7 @@ entryPoints:
 
   web-secure:
     address: ":443"
-
+      
 # Configuration of certificate resolvers
 certificatesResolvers:
   leresolver:
@@ -27,6 +27,7 @@ certificatesResolvers:
     acme:
       email: "majd@smex.com"
       storage: "/acme.json"
+      # caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
       tlsChallenge: {}
 
 # API and dashboard configuration
@@ -37,8 +38,7 @@ api:
 # Configuration for Traefik logs
 log:
   filePath: "/etc/traefik/log/traefik.log"
-  # format: json
-  format: common
+  format: json
   level: DEBUG
 
 # Configuration for Traefik access logs
@@ -52,7 +52,7 @@ accessLog:
     retryAttempts: true
     minDuration: "10ms"
 
-http:
+# http:
 #   routers:
 #     client-router:
 #       rule: "Host(`${PROJECT_URL}`) && PathPrefix(`/`, `/{locale:[a-z]{2}}/`, `/_nuxt/`)"
