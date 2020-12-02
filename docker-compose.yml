@@ -21,6 +21,7 @@ services:
       - traefik.http.routers.api.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/api`, `/admin`, `/static`, `/{locale:[a-z]{2}}/admin`)
       - traefik.http.routers.api.entrypoints=web-secure
       - traefik.http.routers.api.tls.certResolver=leresolver
+      - traefik.http.services.api.loadbalancer.server.port=8000
       # Middlewares
       - "traefik.http.routers.api.middlewares=api-secure@docker"
       - "traefik.http.middlewares.api-secure.headers.framedeny=true"
@@ -48,6 +49,7 @@ services:
       - traefik.http.routers.client.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/{locale:[a-z]{2}}/`, `/_nuxt/`, `/cases`) || Path(`/`)
       - traefik.http.routers.client.tls.certResolver=leresolver
       - traefik.http.routers.client.entrypoints=web-secure
+      - traefik.http.services.client.loadbalancer.server.port=3000
       # Middlewares
       - "traefik.http.routers.client.middlewares=client-secure@docker"
       - "traefik.http.middlewares.client-secure.headers.framedeny=true"
