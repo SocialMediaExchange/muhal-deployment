@@ -11,6 +11,6 @@ WORKDIR /app/client
 RUN npm install
 ENV HOST=0.0.0.0
 ENV NUXT_PORT=3000
-ENV BASE_API_URL=http://backend/api
+ENV BASE_API_URL=http://backend:8000/api
 RUN npm run build
 CMD ["npm", "run", "start"]

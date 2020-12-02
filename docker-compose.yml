@@ -29,6 +29,7 @@ services:
       - "traefik.http.middlewares.api-secure.headers.stsIncludeSubdomains=true"
       - "traefik.http.middlewares.api-secure.headers.stsPreload=true"
       - "traefik.http.middlewares.api-secure.headers.stsSeconds=15552000"
+      - "traefik.http.middlewares.api-secure.headers.contentSecurityPolicy=upgrade-insecure-requests"
     networks:
       - private
 
@@ -57,6 +58,7 @@ services:
       - "traefik.http.middlewares.client-secure.headers.stsIncludeSubdomains=true"
       - "traefik.http.middlewares.client-secure.headers.stsPreload=true"
       - "traefik.http.middlewares.client-secure.headers.stsSeconds=15552000"
+      - "traefik.http.middlewares.client-secure.headers.contentSecurityPolicy=upgrade-insecure-requests"
     networks:
       - private
 
