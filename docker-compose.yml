@@ -21,6 +21,13 @@ services:
       - traefik.http.routers.api.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/api`, `/admin`, `/static`, `/{locale:[a-z]{2}}/admin`)
       - traefik.http.routers.api.entrypoints=web-secure
       - traefik.http.routers.api.tls.certResolver=leresolver
+      # Middlewares
+      - "traefik.http.routers.api.middlewares=api-secure@docker"
+      - "traefik.http.middlewares.api-secure.headers.framedeny=true"
+      - "traefik.http.middlewares.api-secure.headers.sslredirect=true"
+      - "traefik.http.middlewares.api-secure.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.api-secure.headers.stsPreload=true"
+      - "traefik.http.middlewares.api-secure.headers.stsSeconds=15552000"
     networks:
       - private
 
@@ -37,10 +44,17 @@ services:
       - traefik.enable=true
       - traefik.backend=client
       - traefik.docker.network=private
-      - traefik.porta=3000
+      - traefik.port=3000
       - traefik.http.routers.client.rule=Host(`${PROJECT_URL}`) && PathPrefix(`/{locale:[a-z]{2}}/`, `/_nuxt/`, `/cases`) || Path(`/`)
       - traefik.http.routers.client.tls.certResolver=leresolver
       - traefik.http.routers.client.entrypoints=web-secure
+      # Middlewares
+      - "traefik.http.routers.client.middlewares=client-secure@docker"
+      - "traefik.http.middlewares.client-secure.headers.framedeny=true"
+      - "traefik.http.middlewares.client-secure.headers.sslredirect=true"
+      - "traefik.http.middlewares.client-secure.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.client-secure.headers.stsPreload=true"
+      - "traefik.http.middlewares.client-secure.headers.stsSeconds=15552000"
     networks:
       - private
 
